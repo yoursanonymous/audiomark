@@ -1,4 +1,4 @@
-name: Build AudioMark
+name: AudioMark CI
 
 on:
   push:
@@ -9,13 +9,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+      - name: Checkout repo
+        uses: actions/checkout@v3
 
-    - name: Install dependencies
-      run: sudo apt-get install cmake gcc g++
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y cmake gcc g++
 
-    - name: Configure
-      run: cmake -S . -B build
+      - name: Configure project
+        run: cmake -S . -B build
 
-    - name: Build
-      run: cmake --build build
+      - name: Build project
+        run: cmake --build build
+
+      - name: Run Tests
+        run: ctest --test-dir build
