@@ -98,13 +98,12 @@ main(int argc, char *argv[])
     uint32_t  A = 0;
     uint32_t  B = 0;
     int       i, j;
-
     int       inferences = 0;
     float32_t mean_jsd = 0.0f;
     uint32_t  jsd_violation_cnt = 0;
     float32_t max_jsd = 0.0f;
 
-    ee_kws_f32(NODE_MEMREQ, (void **) &p_req, NULL, NULL);
+    ee_kws_f32(NODE_MEMREQ, (void **)&p_req, NULL, NULL);
 
     printf("KWS F32 MEMREQ = %d bytes\n", memreq);
     memory = malloc(memreq);
@@ -113,18 +112,18 @@ main(int argc, char *argv[])
         printf("malloc() fail\n");
         return -1;
     }
-    inst = (void *) memory;
+    inst = (void *)memory;
     SETUP_XDAIS(xdais[0], aec_output, 512);
     SETUP_XDAIS(xdais[1], audio_fifo, 13 * 64 * 2);
     SETUP_XDAIS(xdais[2], mfcc_fifo, 490);
     SETUP_XDAIS(xdais[3], classes, 12);
 
-    ee_kws_f32(NODE_RESET, (void **) &inst, NULL, NULL);
+    ee_kws_f32(NODE_RESET, (void **)&inst, NULL, NULL);
 
     for (i = 0; i < NBUFFERS; ++i)
     {
-        memcpy(aec_output, p_input[i], 512 /* 256 samples @ 2bytes@ */ );
-        ee_kws_f32(NODE_RUN, (void **) &inst, xdais, &new_inference);
+        memcpy(aec_output, p_input[i], 512 /* 256 samples @ 2bytes@ */);
+        ee_kws_f32(NODE_RUN, (void **)&inst, xdais, &new_inference);
 
         /* printf("inferences=%d, i=%d, idx_check=%d\n", inferences, i, idx_check); */
 
@@ -132,18 +131,15 @@ main(int argc, char *argv[])
         A = B = -127;
         p_check = p_expected[idx_check];
         for (j = 0; j < NCLASSES; ++j)
-        {
-            A = MAX(A, classes[j]); /* Look for max value in the calculated result */
-            B = MAX(B, p_check[j]); /* Look for max value in the expected result */
-        }
-        if ((A < 0) && (B < 0))
-        {
-            if (new_inference)
-            {
-                ++inferences;
-                ++idx_check;
+        {  A = MAX(A, classes[j]); /* Look for max value in the calculated result */
+               B = MAX(B, p_check[j]); /* Look for max value in the expected result */
             }
-            continue;           /* Both are less than 0, considered as noise and skip */
+        if ( (A < 0)  && (B < 0)) {
+          if (new_inference) {
+            ++inferences;
+            ++idx_check;
+          }
+          continue; /* Both are less than 0, considered as noise and skip */
         }
 
         if (new_inference)
