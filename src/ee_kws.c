@@ -159,7 +159,7 @@ ee_kws_f32(int32_t command, void **pp_inst, void *p_data, void *p_params)
              */
             uint32_t size = (3 * 4) // See note above
                             + sizeof(mfcc_instance_t)
-                            + 8; /* TODO : justift this */
+                            + 8; /* +8 bytes for alignment/padding safety for vectorized operations. */
             *(uint32_t *)(*pp_inst) = size;
             break;
         }

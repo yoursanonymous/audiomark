@@ -198,7 +198,7 @@ ee_audiomark_release(void)
     th_free(p_aec_inst, COMPONENT_AEC);
     th_free(p_anr_inst, COMPONENT_ANR);
     th_free(p_kws_inst, COMPONENT_KWS);
-    // TODO: De-init NN allocs?
+    th_nn_deinit();
 }
 
 #define CHECK(X)         \
