@@ -31,6 +31,8 @@
 #error "Operating system not recognized"
 #endif
 #include <assert.h>
+#define LOG_INFO(fmt, ...) printf("[INFO] " fmt "\n", ##__VA_ARGS__)
+#define LOG_ERROR(fmt, ...) printf("[ERROR] " fmt "\n", ##__VA_ARGS__)
 
 
 
@@ -85,15 +87,15 @@ main(void)
     uint32_t iterations = 1;
     uint64_t dt         = 0;
 
-    printf("Initializing\n");
+    LOG_INFO("Initializing");
 
     if (ee_audiomark_initialize())
     {
-        printf("Failed to initialize\n");
+        LOG_ERROR("Failed to initialize");
         return -1;
     }
 
-    printf("Computing run speed\n");
+    LOG_INFO("Computing run speed");
 
     do
     {
@@ -107,7 +109,7 @@ main(void)
 
     if (err)
     {
-        printf("Failed to compute iteration speed\n");
+        LOG_ERROR("Failed to compute iteration speed");
         goto exit;
     }
 
@@ -116,12 +118,12 @@ main(void)
     iterations  = (uint32_t)((float)iterations * scale);
     iterations  = iterations < 10 ? 10 : iterations;
 
-    printf("Measuring\n");
+    LOG_INFO("Measuring");
 
     err = time_audiomark_run(iterations, &dt);
     if (err)
     {
-        printf("Failed main performance run\n");
+        LOG_ERROR("Failed main performance run");
         goto exit;
     }
 
@@ -134,9 +136,9 @@ main(void)
     float sec   = (float)dt / 1.0e6f;
     float score = (float)iterations / sec * 1000.f * (1.0f / 1.5f);
 
-    printf("Total runtime    : %.3f seconds\n", sec);
-    printf("Total iterations : %d iterations\n", iterations);
-    printf("Score            : %f AudioMarks\n", score);
+    LOG_INFO("Total runtime    : %.3f seconds", sec);
+    LOG_INFO("Total iterations : %d iterations", iterations);
+    LOG_INFO("Score            : %f AudioMarks", score);
 exit:
     ee_audiomark_release();
     return err ? -1 : 0;
