@@ -377,7 +377,7 @@ ee_abf_f32(int32_t command, void **pp_inst, void *p_data, void *p_params)
                             + sizeof(abf_f32_fastdata_static_t)
                             + sizeof(abf_f32_fastdata_working_t)
                             + sizeof(ee_f32_t *) + sizeof(ee_f32_t *)
-                            + 4; /* +4 bytes for alignment/padding safety for vectorized operations. */
+                            + 4; /* TODO : justify this */
             *(uint32_t *)(*pp_inst) = size;
             break;
         }
