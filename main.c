@@ -31,8 +31,12 @@
 #error "Operating system not recognized"
 #endif
 #include <assert.h>
-#define LOG_INFO(fmt, ...) printf("[INFO] " fmt "\n", ##__VA_ARGS__)
-#define LOG_ERROR(fmt, ...) printf("[ERROR] " fmt "\n", ##__VA_ARGS__)
+#ifndef AUDIOMARK_LOG_INFO
+#define AUDIOMARK_LOG_INFO(fmt, ...) printf("[INFO] " fmt "\n", ##__VA_ARGS__)
+#endif
+#ifndef AUDIOMARK_LOG_ERROR
+#define AUDIOMARK_LOG_ERROR(fmt, ...) printf("[ERROR] " fmt "\n", ##__VA_ARGS__)
+#endif
 
 
 
@@ -87,15 +91,15 @@ main(void)
     uint32_t iterations = 1;
     uint64_t dt         = 0;
 
-    LOG_INFO("Initializing");
+    AUDIOMARK_LOG_INFO("Initializing");
 
     if (ee_audiomark_initialize())
     {
-        LOG_ERROR("Failed to initialize");
+        AUDIOMARK_LOG_ERROR("Failed to initialize");
         return -1;
     }
 
-    LOG_INFO("Computing run speed");
+    AUDIOMARK_LOG_INFO("Computing run speed");
 
     do
     {
@@ -109,7 +113,7 @@ main(void)
 
     if (err)
     {
-        LOG_ERROR("Failed to compute iteration speed");
+        AUDIOMARK_LOG_ERROR("Failed to compute iteration speed");
         goto exit;
     }
 
@@ -118,12 +122,12 @@ main(void)
     iterations  = (uint32_t)((float)iterations * scale);
     iterations  = iterations < 10 ? 10 : iterations;
 
-    LOG_INFO("Measuring");
+    AUDIOMARK_LOG_INFO("Measuring");
 
     err = time_audiomark_run(iterations, &dt);
     if (err)
     {
-        LOG_ERROR("Failed main performance run");
+        AUDIOMARK_LOG_ERROR("Failed main performance run");
         goto exit;
     }
 
@@ -136,9 +140,9 @@ main(void)
     float sec   = (float)dt / 1.0e6f;
     float score = (float)iterations / sec * 1000.f * (1.0f / 1.5f);
 
-    LOG_INFO("Total runtime    : %.3f seconds", sec);
-    LOG_INFO("Total iterations : %d iterations", iterations);
-    LOG_INFO("Score            : %f AudioMarks", score);
+    AUDIOMARK_LOG_INFO("Total runtime    : %.3f seconds", sec);
+    AUDIOMARK_LOG_INFO("Total iterations : %d iterations", iterations);
+    AUDIOMARK_LOG_INFO("Score            : %f AudioMarks", score);
 exit:
     ee_audiomark_release();
     return err ? -1 : 0;
