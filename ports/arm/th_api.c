@@ -435,7 +435,7 @@ th_nn_init(void) {
 }
 
 void
-th_nn_deinit(void) {
+th_cleanup(void) {
 #if !defined(TF_INTERPRETER)
     if (ctx.buf != NULL) {
         free(ctx.buf);

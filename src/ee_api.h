@@ -32,7 +32,7 @@ void th_nn_init(void);
 
 ee_status_t th_nn_classify(const int8_t p_input[490], int8_t p_output[12]);
 
-void th_nn_deinit(void);
+void th_cleanup(void);
 
 /* This borrows _heavily_ from Arm CMSIS/DSP see their copyright. */
 
